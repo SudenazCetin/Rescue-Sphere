@@ -1,0 +1,47 @@
+# .gitignore for .NET / ASP.NET Core Web API
+
+# Build artifacts
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+.vscode/
+
+# Rider
+.idea/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# NuGet
+# Packages folder (if using packages restore)
+packages/
+*.nupkg
+
+# Publish output
+publish/
+
+# Logs and databases
+logs/
+*.log
+*.mdf
+*.ldf
+*.db
+
+# Sensitive or local settings
+secrets.json
+appsettings.*.Local
+
+# JetBrains Rider caches
+_ReSharper*/
+*.DotSettings.user
+
+# OS generated files
+Thumbs.db
+Desktop.ini
