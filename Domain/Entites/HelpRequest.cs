@@ -31,5 +31,5 @@ public class HelpRequest : BaseEntity
     public int SupportCategoryId { get; set; }
     public SupportCategory SupportCategory { get; set; } = null!;
 
-    public ICollection<VolunteerAssignment> VolunteerAssignments { get; set; } = new List<VolunteerAssignment>();
+    //public ICollection<VolunteerAssignment> VolunteerAssignments { get; set; } = new List<VolunteerAssignment>();
 }
