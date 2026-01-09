@@ -1,41 +1,41 @@
+using Microsoft.EntityFrameworkCore;
+using RescueSphere.Api.Data;
+using RescueSphere.Api.Services.Interfaces;
+using RescueSphere.Api.Services.Implementations;
+using RescueSphere.Api.Controllers.Users;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// ================== DATABASE ==================
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=rescueSphere.db"));
+
+// ================== SERVICES ==================
+builder.Services.AddScoped<IUserService, UserService>();
+
+// ================== SWAGGER ==================
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new()
+    {
+        Title = "RescueSphere API",
+        Version = "v1"
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.MapOpenApi();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RescueSphere API v1");
+});
 
-app.UseHttpsRedirection();
+// ================= MAP ENDPOINTS =================
+app.MapUserEndpoints();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// ================= ROOT =================
+app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
