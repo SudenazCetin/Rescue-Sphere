@@ -1,0 +1,6 @@
+@Rescue_Sphere_HostAddress = http://localhost:5178
+
+GET {{Rescue_Sphere_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
