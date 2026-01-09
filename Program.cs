@@ -3,6 +3,7 @@ using RescueSphere.Api.Data;
 using RescueSphere.Api.Services.Interfaces;
 using RescueSphere.Api.Services.Implementations;
 using RescueSphere.Api.Controllers.Users;
+using RescueSphere.Api.Controllers.Categories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // ================== SERVICES ==================
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISupportCategoryService, SupportCategoryService>();
 
 // ================== SWAGGER ==================
 builder.Services.AddEndpointsApiExplorer();
@@ -31,9 +33,9 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "RescueSphere API v1");
 });
-
 // ================= MAP ENDPOINTS =================
 app.MapUserEndpoints();
+app.MapCategoryEndpoints();
 
 // ================= ROOT =================
 app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
