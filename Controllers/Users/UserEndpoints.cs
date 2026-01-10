@@ -47,9 +47,6 @@ public static class UserEndpoints
         IUserService service)
     {
         var user = await service.GetByIdAsync(id);
-        if (user is null)
-            return Results.NotFound(ApiResponse<string>.Fail("User not found"));
-
         return Results.Ok(ApiResponse<UserResponseDto>.Ok(user));
     }
 
@@ -59,9 +56,6 @@ public static class UserEndpoints
         IUserService service)
     {
         var updated = await service.UpdateAsync(id, dto);
-        if (updated is null)
-            return Results.NotFound(ApiResponse<string>.Fail("User not found"));
-
         return Results.Ok(ApiResponse<UserResponseDto>.Ok(updated, "User updated successfully"));
     }
 
@@ -69,10 +63,7 @@ public static class UserEndpoints
         int id, 
         IUserService service)
     {
-        var result = await service.SoftDeleteAsync(id);
-        if (!result)
-            return Results.NotFound(ApiResponse<string>.Fail("User not found"));
-
+        await service.SoftDeleteAsync(id);
         return Results.Ok(ApiResponse<string>.Ok("", "User deleted successfully"));
     }
 }

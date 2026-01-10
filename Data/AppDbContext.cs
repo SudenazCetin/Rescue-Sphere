@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RescueSphere.Api.Data.Seed;
 using RescueSphere.Api.Domain.Entities;
 
 namespace RescueSphere.Api.Data;
@@ -13,16 +14,19 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<SupportCategory> SupportCategories => Set<SupportCategory>();
     public DbSet<HelpRequest> HelpRequests => Set<HelpRequest>();
-    //public DbSet<VolunteerAssignment> VolunteerAssignments => Set<VolunteerAssignment>();
+    public DbSet<VolunteerAssignment> VolunteerAssignments => Set<VolunteerAssignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+        // Seed data
+        UserSeed.Seed(modelBuilder);
+        SupportCategorySeed.Seed(modelBuilder);
+        HelpRequestSeed.Seed(modelBuilder);
+        VolunteerAssignmentSeed.Seed(modelBuilder);
+
         base.OnModelCreating(modelBuilder);
 
-        // Soft Delete Global Filter
-        modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted);
-       modelBuilder.Entity<SupportCategory>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<HelpRequest>().HasQueryFilter(x => !x.IsDeleted);
-        //modelBuilder.Entity<VolunteerAssignment>().HasQueryFilter(x => !x.IsDeleted);
     }
 }

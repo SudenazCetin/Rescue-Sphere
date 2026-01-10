@@ -35,9 +35,6 @@ public static class HelpRequestEndpoints
         IHelpRequestService service)
     {
         var item = await service.GetByIdAsync(id);
-        if (item is null)
-            return Results.NotFound(ApiResponse<string>.Fail("Help request not found"));
-
         return Results.Ok(ApiResponse<HelpRequestResponseDto>.Ok(item));
     }
 
@@ -47,9 +44,6 @@ public static class HelpRequestEndpoints
         IHelpRequestService service)
     {
         var updated = await service.UpdateAsync(id, dto);
-        if (updated is null)
-            return Results.NotFound(ApiResponse<string>.Fail("Help request not found"));
-
         return Results.Ok(ApiResponse<HelpRequestResponseDto>.Ok(updated, "Help request updated"));
     }
 
@@ -57,10 +51,7 @@ public static class HelpRequestEndpoints
         int id, 
         IHelpRequestService service)
     {
-        var result = await service.SoftDeleteAsync(id);
-        if (!result)
-            return Results.NotFound(ApiResponse<string>.Fail("Help request not found"));
-
+        await service.SoftDeleteAsync(id);
         return Results.Ok(ApiResponse<string>.Ok("", "Help request deleted"));
     }
 }

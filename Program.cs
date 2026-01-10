@@ -5,6 +5,8 @@ using RescueSphere.Api.Services.Implementations;
 using RescueSphere.Api.Controllers.Users;
 using RescueSphere.Api.Controllers.Categories;
 using RescueSphere.Api.Controllers.HelpRequests;
+using RescueSphere.Api.Controllers.VolunteerAssignments;
+using RescueSphere.Api.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISupportCategoryService, SupportCategoryService>();
 builder.Services.AddScoped<IHelpRequestService, HelpRequestService>();
+builder.Services.AddScoped<IVolunteerAssignmentService, VolunteerAssignmentService>();
 
 // ================== SWAGGER ==================
 builder.Services.AddEndpointsApiExplorer();
@@ -30,6 +33,15 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// ================== AUTO MIGRATION & SEED ====================
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -40,6 +52,7 @@ app.UseSwaggerUI(c =>
 app.MapUserEndpoints();
 app.MapCategoryEndpoints();
 app.MapHelpRequestEndpoints();
+app.MapVolunteerAssignmentEndpoints();
 
 // ================= ROOT =================
 app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
