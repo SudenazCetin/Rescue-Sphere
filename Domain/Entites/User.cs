@@ -10,5 +10,5 @@ public class User : BaseEntity
     public UserRole Role { get; set; } = UserRole.Citizen;
 
     public ICollection<HelpRequest> HelpRequests { get; set; } = new List<HelpRequest>();
-   // public ICollection<VolunteerAssignment> VolunteerAssignments { get; set; } = new List<VolunteerAssignment>();
+    public ICollection<VolunteerAssignment> VolunteerAssignments { get; set; } = new List<VolunteerAssignment>();
 }
