@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RescueSphere.Api.Common.Exceptions;
 using RescueSphere.Api.Data;
 using RescueSphere.Api.Domain.Entities;
 using RescueSphere.Api.DTOs.VolunteerAssignments;
@@ -16,13 +17,13 @@ public class VolunteerAssignmentService : IVolunteerAssignmentService
     }
 
     // ================= ASSIGN (POST) =================
-    public async Task<bool> AssignAsync(VolunteerAssignmentCreateDto dto)
+    public async Task AssignAsync(VolunteerAssignmentCreateDto dto)
     {
         var helpRequestExists = await _context.HelpRequests
             .AnyAsync(x => x.Id == dto.HelpRequestId && !x.IsDeleted);
 
         if (!helpRequestExists)
-            return false;
+            throw new ApiException("Help request not found", 404);
 
         var assignment = new VolunteerAssignment
         {
@@ -34,8 +35,6 @@ public class VolunteerAssignmentService : IVolunteerAssignmentService
 
         _context.VolunteerAssignments.Add(assignment);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 
     // ================= GET ALL =================
@@ -50,13 +49,16 @@ public class VolunteerAssignmentService : IVolunteerAssignmentService
     }
 
     // ================= GET BY ID =================
-    public async Task<VolunteerAssignmentResponseDto?> GetByIdAsync(int id)
+    public async Task<VolunteerAssignmentResponseDto> GetByIdAsync(int id)
     {
         var entity = await _context.VolunteerAssignments
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
 
-        return entity is null ? null : MapToResponse(entity);
+        if (entity is null)
+            throw new ApiException("Volunteer assignment not found", 404);
+
+        return MapToResponse(entity);
     }
 
     // ================= MAPPER =================

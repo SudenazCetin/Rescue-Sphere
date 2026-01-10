@@ -6,8 +6,8 @@ namespace RescueSphere.Api.Services.Interfaces
     {
         Task<SupportCategoryResponseDto> CreateAsync(SupportCategoryCreateDto dto);
         Task<List<SupportCategoryResponseDto>> GetAllAsync();
-        Task<SupportCategoryResponseDto?> GetByIdAsync(int id);
-        Task<SupportCategoryResponseDto?> UpdateAsync(int id, SupportCategoryUpdateDto dto);
-        Task<bool> SoftDeleteAsync(int id);
+        Task<SupportCategoryResponseDto> GetByIdAsync(int id);
+        Task<SupportCategoryResponseDto> UpdateAsync(int id, SupportCategoryUpdateDto dto);
+        Task SoftDeleteAsync(int id);
     }
 }

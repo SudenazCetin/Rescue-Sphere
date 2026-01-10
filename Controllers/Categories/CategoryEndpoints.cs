@@ -47,9 +47,6 @@ public static class CategoryEndpoints
         ISupportCategoryService service)
     {
         var category = await service.GetByIdAsync(id);
-        if (category is null)
-            return Results.NotFound(ApiResponse<string>.Fail("Category not found"));
-
         return Results.Ok(ApiResponse<SupportCategoryResponseDto>.Ok(category));
     }
 
@@ -59,9 +56,6 @@ public static class CategoryEndpoints
         ISupportCategoryService service)
     {
         var updated = await service.UpdateAsync(id, dto);
-        if (updated is null)
-            return Results.NotFound(ApiResponse<string>.Fail("Category not found"));
-
         return Results.Ok(ApiResponse<SupportCategoryResponseDto>.Ok(updated, "Category updated"));
     }
 
@@ -69,10 +63,7 @@ public static class CategoryEndpoints
         int id, 
         ISupportCategoryService service)
     {
-        var deleted = await service.SoftDeleteAsync(id);
-        if (!deleted)
-            return Results.NotFound(ApiResponse<string>.Fail("Category not found"));
-
+        await service.SoftDeleteAsync(id);
         return Results.Ok(ApiResponse<string>.Ok("", "Category deleted"));
     }
 }

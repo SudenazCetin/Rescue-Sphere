@@ -6,6 +6,7 @@ using RescueSphere.Api.Controllers.Users;
 using RescueSphere.Api.Controllers.Categories;
 using RescueSphere.Api.Controllers.HelpRequests;
 using RescueSphere.Api.Controllers.VolunteerAssignments;
+using RescueSphere.Api.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

@@ -25,12 +25,7 @@ public static class VolunteerAssignmentEndpoints
         VolunteerAssignmentCreateDto dto,
         IVolunteerAssignmentService service)
     {
-        var result = await service.AssignAsync(dto);
-
-        if (!result)
-            return Results.BadRequest(
-                ApiResponse<string>.Fail("HelpRequest not found"));
-
+        await service.AssignAsync(dto);
         return Results.Ok(
             ApiResponse<string>.Ok("", "Volunteer assigned successfully"));
     }
@@ -47,9 +42,6 @@ public static class VolunteerAssignmentEndpoints
         IVolunteerAssignmentService service)
     {
         var assignment = await service.GetByIdAsync(id);
-        if (assignment is null)
-            return Results.NotFound(ApiResponse<string>.Fail("Assignment not found"));
-
         return Results.Ok(ApiResponse<VolunteerAssignmentResponseDto>.Ok(assignment));
     }
 }

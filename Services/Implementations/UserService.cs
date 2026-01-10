@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RescueSphere.Api.Common.Exceptions;
 using RescueSphere.Api.Data;
 using RescueSphere.Api.Domain.Entities;
 using RescueSphere.Api.DTOs.Users;
@@ -45,19 +46,24 @@ public class UserService : IUserService
         return users.Select(MapToResponse).ToList();
     }
 
-    public async Task<UserResponseDto?> GetByIdAsync(int id)
+    public async Task<UserResponseDto> GetByIdAsync(int id)
     {
         var user = await _context.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
 
-        return user is null ? null : MapToResponse(user);
+        if (user is null)
+            throw new ApiException("User not found", 404);
+
+        return MapToResponse(user);
     }
 
-    public async Task<UserResponseDto?> UpdateAsync(int id, UpdateUserDto dto)
+    public async Task<UserResponseDto> UpdateAsync(int id, UpdateUserDto dto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
-        if (user is null) return null;
+        
+        if (user is null)
+            throw new ApiException("User not found", 404);
 
         if (!string.IsNullOrWhiteSpace(dto.Username))
             user.Username = dto.Username;
@@ -75,16 +81,17 @@ public class UserService : IUserService
         return MapToResponse(user);
     }
 
-    public async Task<bool> SoftDeleteAsync(int id)
+    public async Task SoftDeleteAsync(int id)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
-        if (user is null) return false;
+        
+        if (user is null)
+            throw new ApiException("User not found", 404);
 
         user.IsDeleted = true;
         user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return true;
     }
 
     private static UserResponseDto MapToResponse(User user) =>

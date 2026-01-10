@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RescueSphere.Api.Common.Exceptions;
 using RescueSphere.Api.Data;
 using RescueSphere.Api.Domain.Entities;
 using RescueSphere.Api.DTOs.Categories;
@@ -34,19 +35,24 @@ namespace RescueSphere.Api.Services.Implementations
             return list.Select(MapToResponse).ToList();
         }
 
-        public async Task<SupportCategoryResponseDto?> GetByIdAsync(int id)
+        public async Task<SupportCategoryResponseDto> GetByIdAsync(int id)
         {
             var category = await _context.SupportCategories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            return category is null ? null : MapToResponse(category);
+            if (category is null)
+                throw new ApiException("Category not found", 404);
+
+            return MapToResponse(category);
         }
 
-        public async Task<SupportCategoryResponseDto?> UpdateAsync(int id, SupportCategoryUpdateDto dto)
+        public async Task<SupportCategoryResponseDto> UpdateAsync(int id, SupportCategoryUpdateDto dto)
         {
             var category = await _context.SupportCategories.FirstOrDefaultAsync(x => x.Id == id);
-            if (category is null) return null;
+            
+            if (category is null)
+                throw new ApiException("Category not found", 404);
 
             category.Name = dto.Name;
             category.UpdatedAt = DateTime.UtcNow;
@@ -55,16 +61,17 @@ namespace RescueSphere.Api.Services.Implementations
             return MapToResponse(category);
         }
 
-        public async Task<bool> SoftDeleteAsync(int id)
+        public async Task SoftDeleteAsync(int id)
         {
             var category = await _context.SupportCategories.FirstOrDefaultAsync(x => x.Id == id);
-            if (category is null) return false;
+            
+            if (category is null)
+                throw new ApiException("Category not found", 404);
 
             category.IsDeleted = true;
             category.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return true;
         }
 
         private static SupportCategoryResponseDto MapToResponse(SupportCategory c)
