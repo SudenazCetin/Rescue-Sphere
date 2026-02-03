@@ -8,7 +8,7 @@ using RescueSphere.Api.Data;
 
 #nullable disable
 
-namespace Rescue_Sphere.Migrations
+namespace RescueSphere.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260110181645_InitialMigration")]

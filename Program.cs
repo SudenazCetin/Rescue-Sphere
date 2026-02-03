@@ -11,8 +11,10 @@ using RescueSphere.Api.Common.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // ================== DATABASE ==================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                       ?? "Data Source=rescueSphere.db";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=rescueSphere.db"));
+    options.UseSqlite(connectionString));
 
 // ================== SERVICES ==================
 builder.Services.AddScoped<IUserService, UserService>();
@@ -42,11 +44,16 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+// ================== SWAGGER (Development Only) ==================
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RescueSphere API v1");
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "RescueSphere API v1");
+        c.RoutePrefix = "swagger";
+    });
+}
 
 // ================= MAP ENDPOINTS =================
 app.MapUserEndpoints();
@@ -55,6 +62,8 @@ app.MapHelpRequestEndpoints();
 app.MapVolunteerAssignmentEndpoints();
 
 // ================= ROOT =================
-app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
+app.MapGet("/", () => app.Environment.IsDevelopment() 
+    ? Results.Redirect("/swagger/index.html") 
+    : Results.Ok(new { message = "RescueSphere API is running", version = "v1.0", status = "healthy" }));
 
 app.Run();

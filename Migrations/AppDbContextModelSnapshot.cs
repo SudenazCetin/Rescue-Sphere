@@ -7,7 +7,7 @@ using RescueSphere.Api.Data;
 
 #nullable disable
 
-namespace Rescue_Sphere.Migrations
+namespace RescueSphere.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
