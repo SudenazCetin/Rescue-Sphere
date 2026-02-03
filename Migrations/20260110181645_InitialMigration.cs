@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Rescue_Sphere.Migrations
+namespace RescueSphere.Api.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
