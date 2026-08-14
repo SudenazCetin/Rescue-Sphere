@@ -42,7 +42,7 @@ Afet anlarında koordinasyonu sağlamak, yardım taleplerini hızlı ve etkin bi
 
 ---
 
-## 🛠 Öne Çıkan Teknik Özellikler
+## Öne Çıkan Teknik Özellikler
 
 | Özellik | Açıklama |
 |---------|----------|
